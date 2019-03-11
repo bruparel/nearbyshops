@@ -1,0 +1,8 @@
+django
+gunicorn
+django-heroku
+dj-database-url
+psycopg2-binary
+pytz
+urllib3
+requests

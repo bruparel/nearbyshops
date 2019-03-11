@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+# The following two imports are used for Heroku deployment
+import django_heroku
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -73,16 +76,21 @@ WSGI_APPLICATION = 'nearbyshops.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'gis',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432'
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+
+if os.environ.get('ENV') == 'HEROKU':
+    # put Heroku specific database config here
+    DATABASES = {}
+else:
+    DATABASES = {
+        'default': {
+            'NAME': 'gis',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'localhost',
+            'PORT': '5432'
+        }
     }
-}
 
 
 # Password validation
@@ -118,11 +126,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
-
-STATIC_URL = '/static/'
-
 # configuration for the GDAL stuff for windows
 # import os
 if os.name == 'nt':
@@ -135,3 +138,16 @@ if os.name == 'nt':
     os.environ['GDAL_DATA'] = OSGEO4W + r"\share\gdal"
     os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
     os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/2.1/howto/static-files/
+    STATIC_URL = '/static/'
+
+if os.environ.get('ENV') == 'HEROKU':
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/2.0/howto/static-files/
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_URL = "/static/"
+
+    django_heroku.settings(locals())
