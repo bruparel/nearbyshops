@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'nearbyshops.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+# DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 if os.environ.get('ENV') == 'HEROKU':
     # put Heroku specific database config here
@@ -84,6 +84,7 @@ if os.environ.get('ENV') == 'HEROKU':
 else:
     DATABASES = {
         'default': {
+            'ENGINE':'django.contrib.gis.db.backends.postgis',
             'NAME': 'gis',
             'USER': 'postgres',
             'PASSWORD': 'postgres',
@@ -141,6 +142,7 @@ if os.name == 'nt':
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.1/howto/static-files/
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     STATIC_URL = '/static/'
 
 if os.environ.get('ENV') == 'HEROKU':
